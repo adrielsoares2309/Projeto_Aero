@@ -1,0 +1,32 @@
+{
+    "arquivo_origem": "C:\\Users\\adriel_soares2\\Documents\\Projeto_Aero\\data\\processed\\dados_sensores_aeromotion_tratados.csv",
+    "variavel_alvo": "tipo_falha",
+    "melhor_modelo_por_f1_macro_teste": "Random Forest",
+    "quantidade_treino": 8400,
+    "quantidade_teste": 3600,
+    "classes": [
+        "0",
+        "1",
+        "2",
+        "3"
+    ],
+    "variaveis_entrada": [
+        "modo_operacao",
+        "horas_operacao_acumuladas",
+        "temperatura_mancal_c",
+        "vibracao_rms_mms",
+        "pressao_oleo_bar",
+        "rotacao_rpm",
+        "emissao_acustica_db",
+        "corrente_eletrica_amp",
+        "temperatura_mancal_c_media_1h",
+        "temperatura_mancal_c_std_1h",
+        "temperatura_mancal_c_media_6h",
+        "temperatura_mancal_c_std_6h",
+        "vibracao_rms_mms_media_1h",
+        "vibracao_rms_mms_std_1h",
+        "vibracao_rms_mms_media_6h",
+        "vibracao_rms_mms_std_6h",
+        "severidade_dinamica"
+    ]
+}

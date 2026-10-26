@@ -1,0 +1,8 @@
+indicador,valor
+Registros originais,12000
+Colunas originais,11
+Registros finais,12000
+Colunas finais,20
+Timestamps inválidos no CSV original,0
+Valores ausentes no CSV original,1573
+Valores ausentes no dataset tratado,8736

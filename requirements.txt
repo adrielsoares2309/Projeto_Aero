@@ -1,0 +1,34 @@
+
+# Manipulação e tratamento de dados
+pandas
+numpy
+scipy
+
+# Visualização e análise exploratória
+matplotlib
+seaborn
+
+# Machine Learning
+scikit-learn
+imbalanced-learn
+xgboost
+lightgbm
+
+# Serialização de modelos treinados
+joblib
+
+# Jupyter Notebook
+jupyter
+ipykernel
+
+# API REST
+fastapi
+uvicorn[standard]
+pydantic
+
+# Integração e dashboard
+requests
+streamlit
+
+# Visão computacional
+opencv-python

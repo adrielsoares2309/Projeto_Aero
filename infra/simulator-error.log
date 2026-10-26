@@ -1,0 +1,24 @@
+2026-10-26 08:49:06,960 INFO Simulador iniciado (PID 16344) no regime Carga_Alta, intervalo 5.0s.
+2026-10-26 08:49:07,106 INFO 2026-10-26T08:49:06.969 | TURB-101 | Carga_Alta | anormal (C) -> HTTP 200 | classe=Desbalanceamento_Rotor
+2026-10-26 08:49:07,205 INFO 2026-10-26T08:49:06.969 | TURB-102 | Carga_Alta | nominal -> HTTP 200 | classe=Normal
+2026-10-26 08:49:07,293 INFO 2026-10-26T08:49:06.969 | TURB-103 | Carga_Alta | nominal -> HTTP 200 | classe=Normal
+2026-10-26 08:49:07,382 INFO 2026-10-26T08:49:06.969 | TURB-104 | Carga_Alta | nominal -> HTTP 200 | classe=Normal
+2026-10-26 08:49:12,054 INFO 2026-10-26T08:49:11.962 | TURB-101 | Carga_Alta | anormal (A) -> HTTP 200 | classe=Normal
+2026-10-26 08:49:12,137 INFO 2026-10-26T08:49:11.962 | TURB-102 | Carga_Alta | anormal (B) -> HTTP 200 | classe=Desgaste_Rolamento
+2026-10-26 08:49:12,229 INFO 2026-10-26T08:49:11.962 | TURB-103 | Carga_Alta | anormal (B) -> HTTP 200 | classe=Desgaste_Rolamento
+2026-10-26 08:49:12,311 INFO 2026-10-26T08:49:11.962 | TURB-104 | Carga_Alta | nominal -> HTTP 200 | classe=Normal
+2026-10-26 08:49:17,047 INFO 2026-10-26T08:49:16.963 | TURB-101 | Carga_Alta | anormal (A) -> HTTP 200 | classe=Normal
+2026-10-26 08:49:17,134 INFO 2026-10-26T08:49:16.963 | TURB-102 | Carga_Alta | anormal (C) -> HTTP 200 | classe=Desgaste_Rolamento
+2026-10-26 08:49:17,220 INFO 2026-10-26T08:49:16.963 | TURB-103 | Carga_Alta | anormal (A) -> HTTP 200 | classe=Normal
+2026-10-26 08:49:17,313 INFO 2026-10-26T08:49:16.963 | TURB-104 | Carga_Alta | anormal (B) -> HTTP 200 | classe=Desgaste_Rolamento
+2026-10-26 08:49:22,044 INFO 2026-10-26T08:49:21.963 | TURB-101 | Carga_Alta | nominal -> HTTP 200 | classe=Normal
+2026-10-26 08:49:22,136 INFO 2026-10-26T08:49:21.963 | TURB-102 | Carga_Alta | anormal (C) -> HTTP 200 | classe=Desgaste_Rolamento
+2026-10-26 08:49:22,220 INFO 2026-10-26T08:49:21.963 | TURB-103 | Carga_Alta | anormal (A) -> HTTP 200 | classe=Normal
+2026-10-26 08:49:22,312 INFO 2026-10-26T08:49:21.963 | TURB-104 | Carga_Alta | anormal (C) -> HTTP 200 | classe=Desgaste_Rolamento
+2026-10-26 08:49:26,964 INFO Regime alterado: Carga_Alta -> Cruzeiro (estado preservado).
+2026-10-26 08:49:27,083 INFO 2026-10-26T08:49:26.964 | TURB-101 | Cruzeiro | nominal -> HTTP 200 | classe=Normal
+2026-10-26 08:49:27,269 INFO 2026-10-26T08:49:26.964 | TURB-102 | Cruzeiro | nominal -> HTTP 200 | classe=Desbalanceamento_Rotor
+2026-10-26 08:49:27,379 INFO 2026-10-26T08:49:26.964 | TURB-103 | Cruzeiro | nominal -> HTTP 200 | classe=Normal
+2026-10-26 08:49:27,471 INFO 2026-10-26T08:49:26.964 | TURB-104 | Cruzeiro | nominal -> HTTP 200 | classe=Desgaste_Rolamento
+2026-10-26 08:49:27,474 INFO Comando de parada recebido durante a espera.
+2026-10-26 08:49:27,477 INFO Simulador encerrado com segurança.
