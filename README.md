@@ -73,10 +73,10 @@ O simulador grava heartbeat/estado em `data/runtime/simulator_state.json` e usa 
 ```powershell
 .\venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
-.\infra\start_stack.ps1
+.\infra\start.ps1
 ```
 
-Links: API/Swagger em `http://127.0.0.1:8000/docs` e dashboard em `http://127.0.0.1:8501`. Para encerrar ambos: `./infra/stop_services.ps1`.
+Links: API/Swagger em `http://127.0.0.1:8000/docs` e dashboard em `http://127.0.0.1:8501`. Para encerrar ambos: `.\infra\start.ps1 -Stop`.
 
 Também é possível executar em terminais separados:
 

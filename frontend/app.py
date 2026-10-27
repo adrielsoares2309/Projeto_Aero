@@ -11,6 +11,7 @@ Interface industrial moderna em Streamlit e Plotly:
 from __future__ import annotations
 
 import json
+import hashlib
 import subprocess
 import sys
 from datetime import datetime, timedelta
@@ -18,6 +19,8 @@ from pathlib import Path
 
 import pandas as pd
 import streamlit as st
+import cv2
+import numpy as np
 
 # Diretório raiz para garantir imports absolutos
 ROOT_DIR = Path(__file__).resolve().parents[1]
@@ -30,6 +33,9 @@ import frontend.components as comp
 import frontend.icons as ic
 import simulator as sim
 from frontend.styles import COLORS, inject_css
+from vision.geometry import GeometryConfig, analyze_geometry, load_image, classify_geometry_against_references
+from vision.pipeline import diagnose_image_dataset, predict_image
+from vision.thermal import ThermalConfig, analyze_thermal, classify_thermal_against_references
 
 # --------------------------------------------------------------------------- #
 # Configuração da página Streamlit                                            #
@@ -155,7 +161,7 @@ def render_sidebar() -> tuple[str, str, int]:
         )
         page = st.radio(
             "Navegação do Sistema",
-            ["Monitoramento", "Avaliação do Modelo"],
+            ["Monitoramento", "Avaliação do Modelo", "Visão Computacional"],
             label_visibility="collapsed",
         )
 
@@ -256,7 +262,6 @@ def render_sidebar() -> tuple[str, str, int]:
 
             col_btn1, col_btn2 = st.columns(2)
             running = simulator_running()
-
             if col_btn1.button(
                 "Iniciar",
                 type="primary",
@@ -669,6 +674,273 @@ def page_evaluation() -> None:
         except Exception as e:
             st.warning(f"Erro ao renderizar importância das variáveis: {e}")
 
+    # 5. Correlação real dos preditores do dataset tratado.
+    render_correlation_section()
+
+
+def render_correlation_section() -> None:
+    """Exibe correlações dos preditores reais sem alterar o CSV de origem."""
+    icon = ic.activity(color=COLORS["text_heading"], size=16)
+    st.markdown(
+        f'<div class="section-title">{icon} Matriz de Correlação das Variáveis</div>',
+        unsafe_allow_html=True,
+    )
+    data_path = ROOT_DIR / "data" / "processed" / "dados_sensores_aeromotion_tratados.csv"
+    if not data_path.exists():
+        st.info(f"Dataset tratado não encontrado: {data_path}")
+        return
+    try:
+        frame = pd.read_csv(data_path)
+        numeric = frame.select_dtypes(include=[np.number]).copy()
+        excluded = {
+            name for name in numeric.columns
+            if name.casefold() in {"tipo_falha", "target", "label", "classe", "classe_falha"}
+            or name.casefold().startswith("id_")
+            or name.casefold().endswith("_id")
+        }
+        numeric = numeric.drop(columns=list(excluded), errors="ignore")
+        usable = [
+            column for column in numeric.columns
+            if numeric[column].notna().sum() >= 2 and numeric[column].nunique(dropna=True) > 1
+        ]
+        numeric = numeric[usable]
+        if len(numeric.columns) < 2:
+            st.info("Não há pelo menos duas variáveis numéricas com observações suficientes e variação.")
+            return
+        method = st.selectbox(
+            "Método de correlação",
+            ["Pearson", "Spearman"],
+            key="correlation_method",
+            help="Pearson mede associação linear; Spearman mede associação monotônica por postos.",
+        ).lower()
+        corr = numeric.corr(method=method, min_periods=2)
+        corr = corr.replace([np.inf, -np.inf], np.nan)
+        st.caption(
+            f"Fonte: {data_path.relative_to(ROOT_DIR)} · {len(frame):,} registros · "
+            f"{len(usable)} preditores numéricos. Ausências são tratadas por pares disponíveis; "
+            "o arquivo original não é modificado. Correlação não implica causalidade."
+        )
+        st.plotly_chart(
+            charts.correlation_heatmap(corr, annotate=len(usable) <= 12),
+            width="stretch",
+            config={"displayModeBar": False},
+        )
+        threshold = st.slider(
+            "Destacar pares com correlação absoluta a partir de",
+            min_value=0.50, max_value=0.95, value=0.70, step=0.05,
+            key="correlation_threshold",
+        )
+        pairs: list[tuple[str, str, float]] = []
+        for i, first in enumerate(usable):
+            for second in usable[i + 1:]:
+                value = corr.loc[first, second]
+                if pd.notna(value) and abs(float(value)) >= threshold:
+                    pairs.append((first, second, float(value)))
+        pairs.sort(key=lambda item: abs(item[2]), reverse=True)
+        if pairs:
+            st.markdown("**Pares destacados**")
+            for first, second, value in pairs[:20]:
+                if value > 0:
+                    meaning = "tendem a aumentar conjuntamente"
+                elif value < 0:
+                    meaning = "uma tende a aumentar enquanto a outra diminui"
+                else:
+                    meaning = "não apresentam associação linear"
+                st.write(f"{first} × {second}: **{value:+.3f}** — {meaning}.")
+            if len(pairs) > 20:
+                st.caption(f"Mostrando os 20 pares mais fortes entre {len(pairs)} encontrados.")
+        else:
+            st.info(f"Nenhum par atingiu |r| ≥ {threshold:.2f}.")
+    except Exception as exc:
+        st.warning(f"Não foi possível calcular a matriz de correlação: {exc}")
+
+
+def _decode_upload(uploaded: Any) -> np.ndarray:
+    """Decodifica o arquivo enviado em memória; não persiste a imagem recebida."""
+    raw = np.frombuffer(uploaded.getvalue(), dtype=np.uint8)
+    image = cv2.imdecode(raw, cv2.IMREAD_COLOR)
+    if image is None or image.size == 0:
+        raise ValueError("O arquivo não contém uma imagem PNG ou JPEG válida.")
+    return image
+
+
+def _display_bgr(image: np.ndarray, caption: str) -> None:
+    st.image(cv2.cvtColor(image, cv2.COLOR_BGR2RGB), caption=caption, width="stretch")
+
+
+def page_vision() -> None:
+    """Interface de demonstração geométrica e térmica por comparação OpenCV."""
+    icon = ic.layers(color=COLORS["blue_primary"], size=22)
+    st.markdown(
+        f'<div class="aero-header"><div class="aero-header-left">'
+        f'<h1>{icon} &nbsp;Visão Computacional</h1>'
+        "<p>Comparação visual com referências AeroMotion — resultados qualitativos por OpenCV</p>"
+        "</div></div>", unsafe_allow_html=True,
+    )
+    with st.expander("Diagnóstico do dataset de imagens"):
+        diagnosis = diagnose_image_dataset()
+        st.write(f"Arquivos encontrados: **{diagnosis['total_files']}** · "
+                 f"Imagens suportadas: **{diagnosis['supported_images']}**")
+        st.dataframe(pd.DataFrame([
+            {"Modalidade": modality, "Imagens": count,
+             "Classes detectadas": ", ".join(
+                 f"{label} ({amount})"
+                 for label, amount in diagnosis["class_counts"].get(modality, {}).items()
+             ) or "Sem rótulo"}
+            for modality, count in diagnosis["modality_counts"].items()
+        ]), width="stretch", hide_index=True)
+        st.caption(f"Dimensões: {diagnosis['dimensions']} · Arquivos inválidos: {len(diagnosis['invalid_files'])} · "
+                   f"Duplicatas exatas: {len(diagnosis['exact_duplicates'])} · "
+                   f"Possíveis semelhantes: {len(diagnosis['near_duplicate_candidates'])}")
+        st.caption("Rótulos inferidos somente de nomes explícitos como normal, deformada e aquecimento; confirme-os antes de treinar.")
+    st.markdown("**1. Escolha o tipo de inspeção**")
+    modality_label = st.radio(
+        "Modalidade de inspeção", ["Inspeção geométrica", "Inspeção térmica"],
+        horizontal=True, key="vision_modality",
+    )
+    modality = "geometrica" if modality_label == "Inspeção geométrica" else "termica"
+    references = {
+        "geometrica": {
+            "normal": ROOT_DIR / "data/raw/imagens/geo_001_pa_normal.png",
+            "abnormal": ROOT_DIR / "data/raw/imagens/geo_001_pa_deformada.png",
+        },
+        "termica": {
+            "normal": ROOT_DIR / "data/raw/imagens/turbina_normal.png",
+            "abnormal": ROOT_DIR / "data/raw/imagens/turbina_aquecimento.png",
+        },
+    }[modality]
+    ref_labels = ("Referência normal", "Referência deformada") if modality == "geometrica" else ("Referência normal", "Referência com superaquecimento")
+    st.markdown("**Referências visuais**")
+    ref_cols = st.columns(2)
+    ref_images: dict[str, np.ndarray] = {}
+    try:
+        for column, key, label in zip(ref_cols, ("normal", "abnormal"), ref_labels):
+            ref_images[key] = load_image(references[key])
+            with column:
+                _display_bgr(ref_images[key], f"{label} · {references[key].name}")
+    except (ValueError, cv2.error) as exc:
+        st.error(f"Não foi possível carregar uma imagem de referência: {exc}")
+        return
+
+    source_mode = st.radio("Imagem para análise", ["Usar referência", "Enviar imagem"], horizontal=True,
+                           key=f"vision_source_{modality}")
+    if source_mode == "Usar referência":
+        selected_label = st.selectbox("Demonstração", [f"{ref_labels[0]} — {references['normal'].name}",
+                                                        f"{ref_labels[1]} — {references['abnormal'].name}"],
+                                      key=f"vision_demo_{modality}")
+        selected_key = "normal" if selected_label.startswith(ref_labels[0]) else "abnormal"
+        image = ref_images[selected_key].copy()
+        image_bytes = references[selected_key].read_bytes()
+        image_name = references[selected_key].name
+    else:
+        uploaded = st.file_uploader("Imagem do componente", type=["png", "jpg", "jpeg"], key=f"vision_upload_{modality}")
+        if uploaded is None:
+            st.info("Envie uma imagem para executar a inspeção.")
+            return
+        image_bytes = uploaded.getvalue()
+        image_name = uploaded.name
+        try:
+            image = _decode_upload(uploaded)
+        except (ValueError, cv2.error) as exc:
+            st.error(f"Imagem inválida: {exc}")
+            return
+    image_hash = hashlib.sha256(image_bytes).hexdigest()
+    st.caption(f"Imagem selecionada: {image_name} · {image.shape[1]} × {image.shape[0]} px")
+    _display_bgr(image, "Imagem original")
+
+    st.markdown("**2. Configure e execute a análise**")
+    if modality == "termica":
+        hue_range = st.slider("Faixa HSV para máscara visual (OpenCV)", 0, 179, (0, 35), key="vision_hue")
+        saturation_min = st.slider("Saturação mínima", 0, 255, 80, key="vision_sat")
+        value_min = st.slider("Valor mínimo", 0, 255, 80, key="vision_value")
+        min_area = st.number_input("Área mínima da região (pixels)", 0, 100000, 20, key="vision_min_area")
+        thermal_config = ThermalConfig(
+            hsv_ranges=((tuple([hue_range[0], saturation_min, value_min]),
+                         tuple([hue_range[1], 255, 255])),),
+            min_area=int(min_area),
+        )
+        config_key = (hue_range, saturation_min, value_min, int(min_area))
+    else:
+        canny_range = st.slider("Limiares Canny: baixo e alto", 0, 255, (50, 150), key="vision_canny")
+        min_area = st.number_input("Área mínima do contorno (pixels)", 0, 100000, 20, key="vision_geo_min_area")
+        canny_low = min(int(canny_range[0]), 254)
+        geometry_config = GeometryConfig(
+            canny_low=canny_low, canny_high=max(int(canny_range[1]), canny_low + 1),
+            min_contour_area=float(min_area),
+        )
+        config_key = (canny_range, int(min_area))
+    run_analysis = st.button("Executar inspeção", type="primary", key="run_vision_analysis")
+    result_key = "vision_analysis_result"
+    previous = st.session_state.get(result_key)
+    if run_analysis:
+        try:
+            if modality == "termica":
+                analysis = analyze_thermal(image, config=thermal_config, include_artifacts=True)
+                classification = classify_thermal_against_references(image, ref_images["normal"], ref_images["abnormal"])
+            else:
+                analysis = analyze_geometry(image, config=geometry_config, include_artifacts=True)
+                classification = classify_geometry_against_references(image, ref_images["normal"], ref_images["abnormal"])
+            st.session_state[result_key] = {
+                "hash": image_hash, "modality": modality, "config": config_key,
+                "analysis": analysis, "classification": classification,
+            }
+            previous = st.session_state[result_key]
+        except (ValueError, cv2.error, OSError) as exc:
+            st.error(f"Falha ao analisar a imagem: {exc}")
+            return
+    if not previous or previous.get("hash") != image_hash or previous.get("modality") != modality or previous.get("config") != config_key:
+        st.caption("Execute a inspeção para ver os resultados. Alterar imagem ou parâmetros exige nova análise.")
+        return
+
+    analysis = previous["analysis"]
+    classification = previous["classification"]
+    st.markdown("**3. Resultado e detalhes técnicos**")
+    verdict = classification["classification"]
+    if verdict in {"REPROVADA", "SUPERAQUECIMENTO"}:
+        st.error(f"**{verdict}**")
+    elif verdict in {"DENTRO DOS CONFORMES", "TEMPERATURA NORMAL"}:
+        st.success(f"**{verdict}**")
+    else:
+        st.warning("**INCONCLUSIVA**")
+    st.write(classification["justification"])
+    st.caption("Método: comparação visual relativa por OpenCV. Não é um modelo de Machine Learning nem uma inspeção industrial certificada.")
+    artifacts = analysis["artifacts"]
+    if modality == "termica":
+        col_processed, col_mask = st.columns(2)
+        with col_processed:
+            _display_bgr(artifacts["annotated"], "Regiões HSV candidatas")
+        with col_mask:
+            st.image(artifacts["mask"], caption="Máscara binária de candidatos", width="stretch")
+        st.write(f"Regiões candidatas: **{analysis['region_count']}** · Área segmentada pela configuração atual: **{analysis['mask_fraction']:.2%}**")
+        st.write(f"Pixels quentes relativos às referências: **{classification['metrics']['warm_fraction']:.2%}** · "
+                 f"Normal: **{classification['metrics']['normal_reference_warm_fraction']:.2%}** · "
+                 f"Superaquecida: **{classification['metrics']['overheated_reference_warm_fraction']:.2%}**")
+        st.caption("Segmentação HSV e fração de cor são qualitativas. Imagens falsas coloridas não fornecem temperatura em °C.")
+        if analysis["region_count"] == 0:
+            st.info("Nenhuma região foi selecionada pela faixa HSV atual. Isso não confirma estado normal; a paleta pode não corresponder aos limiares.")
+    else:
+        col_gray, col_edges, col_contours = st.columns(3)
+        with col_gray:
+            st.image(artifacts["gray"], caption="Escala de cinza", width="stretch")
+        with col_edges:
+            st.image(artifacts["edges"], caption="Bordas Canny", width="stretch")
+        with col_contours:
+            _display_bgr(artifacts["contours"], "Contornos detectados")
+        _display_bgr(artifacts["annotated"], "Contornos e caixas delimitadoras")
+        st.write(f"Contornos relevantes: **{analysis['contour_count']}**")
+        st.write(f"IoU da silhueta normalizada — referência normal: **{classification['metrics']['normal_reference_iou']:.3f}** · "
+                 f"referência deformada: **{classification['metrics']['defective_reference_iou']:.3f}**")
+        if analysis["contours"]:
+            table = pd.DataFrame(analysis["contours"])
+            table["bbox"] = table["bbox"].apply(lambda box: f"{box['width']} × {box['height']} em ({box['x']}, {box['y']})")
+            st.dataframe(table[["index", "area", "perimeter", "circularity", "aspect_ratio", "bbox"]].head(20),
+                         width="stretch", hide_index=True)
+        else:
+            st.info("Não foram encontrados contornos acima da área mínima configurada.")
+    with st.expander("Critérios e limitações"):
+        st.json({"criteria": classification["criteria"], "metrics": classification["metrics"],
+                 "limitations": classification["limitations"], "opencv_analysis": {k: v for k, v in analysis.items() if k != "artifacts"}})
+
 
 # --------------------------------------------------------------------------- #
 # Orquestrador da Aplicação                                                   #
@@ -677,8 +949,10 @@ def main() -> None:
     page, equipment, refresh = render_sidebar()
     if page == "Monitoramento":
         page_monitoring(equipment, refresh)
-    else:
+    elif page == "Avaliação do Modelo":
         page_evaluation()
+    else:
+        page_vision()
 
 
 if __name__ == "__main__":

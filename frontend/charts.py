@@ -723,3 +723,36 @@ def anomaly_timeline_chart(df: pd.DataFrame, equipment: str | None = None) -> go
     )
     fig.update_layout(**layout)
     return fig
+
+
+def correlation_heatmap(correlation: pd.DataFrame, annotate: bool | None = None) -> go.Figure:
+    """Mapa divergente de coeficientes de correlação, limitado a [-1, 1]."""
+    labels = [str(column) for column in correlation.columns]
+    values = correlation.to_numpy(dtype=float)
+    if annotate is None:
+        annotate = len(labels) <= 12
+    fig = go.Figure(go.Heatmap(
+        x=labels, y=labels, z=values,
+        zmin=-1, zmax=1, zmid=0,
+        colorscale=[[0, "#2166AC"], [0.5, "#FFFFFF"], [1, "#B2182B"]],
+        colorbar=dict(title="Correlação", tickvals=[-1, -0.5, 0, 0.5, 1]),
+        customdata=np.stack(np.meshgrid(labels, labels), axis=-1),
+        hovertemplate="Variáveis: %{y} × %{x}<br>Coeficiente: %{z:.3f}<extra></extra>",
+    ))
+    if annotate:
+        for row, y_label in enumerate(labels):
+            for col, x_label in enumerate(labels):
+                value = values[row, col]
+                if np.isfinite(value):
+                    fig.add_annotation(x=x_label, y=y_label, text=f"{value:.2f}",
+                                       showarrow=False,
+                                       font=dict(size=9, color="#FFFFFF" if abs(value) >= 0.45 else "#183B56"))
+    height = min(820, max(420, 34 * len(labels) + 160))
+    fig.update_layout(
+        template=PLOTLY_TEMPLATE, paper_bgcolor="#FFFFFF", plot_bgcolor="#FFFFFF",
+        height=height, margin=dict(l=150, r=30, t=24, b=140),
+        font=dict(family="'Inter', sans-serif", color="#183B56"),
+        xaxis=dict(tickangle=-45, side="bottom", automargin=True),
+        yaxis=dict(autorange="reversed", automargin=True, scaleanchor="x", scaleratio=1),
+    )
+    return fig

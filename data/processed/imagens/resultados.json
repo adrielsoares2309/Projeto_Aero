@@ -1,0 +1,573 @@
+{
+  "generated_at_utc": "2026-10-27T13:56:20.117944+00:00",
+  "input_root": "C:\\Users\\adriel_soares2\\Documents\\Projeto_Aero\\data\\raw\\imagens",
+  "total_images_found": 4,
+  "supported_images": 4,
+  "processed": 4,
+  "geometric_images": 2,
+  "thermal_images": 2,
+  "ignored": 0,
+  "failures": 0,
+  "unsupported_files": [],
+  "results": [
+    {
+      "type": "geometrica",
+      "status": "processed",
+      "path": "C:\\Users\\adriel_soares2\\Documents\\Projeto_Aero\\data\\raw\\imagens\\geo_001_pa_deformada.png",
+      "width": 1408,
+      "height": 768,
+      "channels": 3,
+      "depth": "uint8",
+      "contour_count": 1,
+      "contours": [
+        {
+          "index": 0,
+          "area": 355937.0,
+          "perimeter": 3631.640822172165,
+          "circularity": 0.3391385986220179,
+          "bbox": {
+            "x": 66,
+            "y": 150,
+            "width": 1276,
+            "height": 485
+          },
+          "centroid": {
+            "x": 636.4570846338911,
+            "y": 383.39359352919195
+          },
+          "aspect_ratio": 2.6309278350515464
+        }
+      ],
+      "parameters": {
+        "gaussian_kernel": 5,
+        "canny_low": 50,
+        "canny_high": 150,
+        "min_contour_area": 20.0
+      },
+      "outputs": {
+        "cinza": "C:\\Users\\adriel_soares2\\Documents\\Projeto_Aero\\data\\processed\\imagens\\geometricas\\geo_001_pa_deformada_138c21b511\\geo_001_pa_deformada_cinza.png",
+        "bordas": "C:\\Users\\adriel_soares2\\Documents\\Projeto_Aero\\data\\processed\\imagens\\geometricas\\geo_001_pa_deformada_138c21b511\\geo_001_pa_deformada_bordas.png",
+        "anotadas": "C:\\Users\\adriel_soares2\\Documents\\Projeto_Aero\\data\\processed\\imagens\\geometricas\\geo_001_pa_deformada_138c21b511\\geo_001_pa_deformada_anotadas.png"
+      },
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "type": "geometrica",
+      "status": "processed",
+      "path": "C:\\Users\\adriel_soares2\\Documents\\Projeto_Aero\\data\\raw\\imagens\\geo_001_pa_normal.png",
+      "width": 1407,
+      "height": 768,
+      "channels": 3,
+      "depth": "uint8",
+      "contour_count": 1,
+      "contours": [
+        {
+          "index": 0,
+          "area": 378960.0,
+          "perimeter": 3624.205186486244,
+          "circularity": 0.3625581571172998,
+          "bbox": {
+            "x": 65,
+            "y": 150,
+            "width": 1276,
+            "height": 485
+          },
+          "centroid": {
+            "x": 673.2110288684821,
+            "y": 392.26808854056713
+          },
+          "aspect_ratio": 2.6309278350515464
+        }
+      ],
+      "parameters": {
+        "gaussian_kernel": 5,
+        "canny_low": 50,
+        "canny_high": 150,
+        "min_contour_area": 20.0
+      },
+      "outputs": {
+        "cinza": "C:\\Users\\adriel_soares2\\Documents\\Projeto_Aero\\data\\processed\\imagens\\geometricas\\geo_001_pa_normal_13947cd63e\\geo_001_pa_normal_cinza.png",
+        "bordas": "C:\\Users\\adriel_soares2\\Documents\\Projeto_Aero\\data\\processed\\imagens\\geometricas\\geo_001_pa_normal_13947cd63e\\geo_001_pa_normal_bordas.png",
+        "anotadas": "C:\\Users\\adriel_soares2\\Documents\\Projeto_Aero\\data\\processed\\imagens\\geometricas\\geo_001_pa_normal_13947cd63e\\geo_001_pa_normal_anotadas.png"
+      },
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "type": "termica",
+      "status": "processed",
+      "path": "C:\\Users\\adriel_soares2\\Documents\\Projeto_Aero\\data\\raw\\imagens\\turbina_aquecimento.png",
+      "width": 1024,
+      "height": 1024,
+      "channels": 3,
+      "region_count": 36,
+      "regions": [
+        {
+          "area": 1595.0,
+          "bbox": {
+            "x": 544,
+            "y": 143,
+            "width": 35,
+            "height": 68
+          }
+        },
+        {
+          "area": 1536.5,
+          "bbox": {
+            "x": 450,
+            "y": 144,
+            "width": 34,
+            "height": 65
+          }
+        },
+        {
+          "area": 1590.5,
+          "bbox": {
+            "x": 360,
+            "y": 161,
+            "width": 46,
+            "height": 72
+          }
+        },
+        {
+          "area": 1609.5,
+          "bbox": {
+            "x": 623,
+            "y": 162,
+            "width": 46,
+            "height": 73
+          }
+        },
+        {
+          "area": 1512.0,
+          "bbox": {
+            "x": 695,
+            "y": 213,
+            "width": 53,
+            "height": 64
+          }
+        },
+        {
+          "area": 1415.5,
+          "bbox": {
+            "x": 281,
+            "y": 214,
+            "width": 51,
+            "height": 59
+          }
+        },
+        {
+          "area": 1555.5,
+          "bbox": {
+            "x": 754,
+            "y": 278,
+            "width": 63,
+            "height": 56
+          }
+        },
+        {
+          "area": 1466.5,
+          "bbox": {
+            "x": 212,
+            "y": 279,
+            "width": 60,
+            "height": 52
+          }
+        },
+        {
+          "area": 93494.0,
+          "bbox": {
+            "x": 355,
+            "y": 291,
+            "width": 314,
+            "height": 378
+          }
+        },
+        {
+          "area": 462.0,
+          "bbox": {
+            "x": 354,
+            "y": 351,
+            "width": 34,
+            "height": 37
+          }
+        },
+        {
+          "area": 337.5,
+          "bbox": {
+            "x": 639,
+            "y": 353,
+            "width": 36,
+            "height": 37
+          }
+        },
+        {
+          "area": 1582.0,
+          "bbox": {
+            "x": 162,
+            "y": 356,
+            "width": 69,
+            "height": 46
+          }
+        },
+        {
+          "area": 1655.5,
+          "bbox": {
+            "x": 794,
+            "y": 357,
+            "width": 71,
+            "height": 48
+          }
+        },
+        {
+          "area": 427.5,
+          "bbox": {
+            "x": 325,
+            "y": 391,
+            "width": 27,
+            "height": 40
+          }
+        },
+        {
+          "area": 146.5,
+          "bbox": {
+            "x": 673,
+            "y": 391,
+            "width": 15,
+            "height": 22
+          }
+        },
+        {
+          "area": 121.0,
+          "bbox": {
+            "x": 317,
+            "y": 441,
+            "width": 11,
+            "height": 38
+          }
+        },
+        {
+          "area": 1578.0,
+          "bbox": {
+            "x": 138,
+            "y": 448,
+            "width": 68,
+            "height": 33
+          }
+        },
+        {
+          "area": 1670.5,
+          "bbox": {
+            "x": 818,
+            "y": 451,
+            "width": 71,
+            "height": 33
+          }
+        },
+        {
+          "area": 75.0,
+          "bbox": {
+            "x": 310,
+            "y": 492,
+            "width": 7,
+            "height": 25
+          }
+        },
+        {
+          "area": 1572.5,
+          "bbox": {
+            "x": 138,
+            "y": 541,
+            "width": 66,
+            "height": 32
+          }
+        },
+        {
+          "area": 61.0,
+          "bbox": {
+            "x": 314,
+            "y": 543,
+            "width": 10,
+            "height": 24
+          }
+        },
+        {
+          "area": 1587.0,
+          "bbox": {
+            "x": 819,
+            "y": 544,
+            "width": 69,
+            "height": 33
+          }
+        },
+        {
+          "area": 66.5,
+          "bbox": {
+            "x": 696,
+            "y": 557,
+            "width": 10,
+            "height": 24
+          }
+        },
+        {
+          "area": 50.0,
+          "bbox": {
+            "x": 673,
+            "y": 603,
+            "width": 14,
+            "height": 23
+          }
+        },
+        {
+          "area": 72.5,
+          "bbox": {
+            "x": 339,
+            "y": 611,
+            "width": 13,
+            "height": 18
+          }
+        },
+        {
+          "area": 1598.5,
+          "bbox": {
+            "x": 156,
+            "y": 620,
+            "width": 70,
+            "height": 45
+          }
+        },
+        {
+          "area": 1585.5,
+          "bbox": {
+            "x": 796,
+            "y": 623,
+            "width": 66,
+            "height": 46
+          }
+        },
+        {
+          "area": 51.5,
+          "bbox": {
+            "x": 352,
+            "y": 635,
+            "width": 11,
+            "height": 10
+          }
+        },
+        {
+          "area": 1618.5,
+          "bbox": {
+            "x": 198,
+            "y": 694,
+            "width": 67,
+            "height": 56
+          }
+        },
+        {
+          "area": 1477.5,
+          "bbox": {
+            "x": 757,
+            "y": 699,
+            "width": 61,
+            "height": 53
+          }
+        },
+        {
+          "area": 1571.5,
+          "bbox": {
+            "x": 268,
+            "y": 755,
+            "width": 55,
+            "height": 61
+          }
+        },
+        {
+          "area": 1524.0,
+          "bbox": {
+            "x": 696,
+            "y": 760,
+            "width": 53,
+            "height": 62
+          }
+        },
+        {
+          "area": 1576.5,
+          "bbox": {
+            "x": 349,
+            "y": 799,
+            "width": 47,
+            "height": 64
+          }
+        },
+        {
+          "area": 1580.0,
+          "bbox": {
+            "x": 621,
+            "y": 802,
+            "width": 46,
+            "height": 65
+          }
+        },
+        {
+          "area": 1462.0,
+          "bbox": {
+            "x": 443,
+            "y": 826,
+            "width": 34,
+            "height": 62
+          }
+        },
+        {
+          "area": 1493.5,
+          "bbox": {
+            "x": 539,
+            "y": 828,
+            "width": 32,
+            "height": 61
+          }
+        }
+      ],
+      "mask_fraction": 0.1085662841796875,
+      "parameters": {
+        "hsv_ranges": [
+          [
+            [
+              0,
+              100,
+              100
+            ],
+            [
+              10,
+              255,
+              255
+            ]
+          ],
+          [
+            [
+              170,
+              100,
+              100
+            ],
+            [
+              179,
+              255,
+              255
+            ]
+          ]
+        ],
+        "min_area": 20,
+        "morph_kernel": 3,
+        "morphology": true
+      },
+      "outputs": {
+        "mascaras": "C:\\Users\\adriel_soares2\\Documents\\Projeto_Aero\\data\\processed\\imagens\\termicas\\turbina_aquecimento_3d3fc2f45c\\turbina_aquecimento_mascaras.png",
+        "anotadas": "C:\\Users\\adriel_soares2\\Documents\\Projeto_Aero\\data\\processed\\imagens\\termicas\\turbina_aquecimento_3d3fc2f45c\\turbina_aquecimento_anotadas.png"
+      },
+      "temperature_measurement": null,
+      "interpretation": "Análise visual qualitativa; cores não representam temperatura calibrada em °C.",
+      "warnings": [],
+      "errors": []
+    },
+    {
+      "type": "termica",
+      "status": "processed",
+      "path": "C:\\Users\\adriel_soares2\\Documents\\Projeto_Aero\\data\\raw\\imagens\\turbina_normal.png",
+      "width": 1024,
+      "height": 1024,
+      "channels": 3,
+      "region_count": 0,
+      "regions": [],
+      "mask_fraction": 0.0,
+      "parameters": {
+        "hsv_ranges": [
+          [
+            [
+              0,
+              100,
+              100
+            ],
+            [
+              10,
+              255,
+              255
+            ]
+          ],
+          [
+            [
+              170,
+              100,
+              100
+            ],
+            [
+              179,
+              255,
+              255
+            ]
+          ]
+        ],
+        "min_area": 20,
+        "morph_kernel": 3,
+        "morphology": true
+      },
+      "outputs": {
+        "mascaras": "C:\\Users\\adriel_soares2\\Documents\\Projeto_Aero\\data\\processed\\imagens\\termicas\\turbina_normal_08d004f3f5\\turbina_normal_mascaras.png",
+        "anotadas": "C:\\Users\\adriel_soares2\\Documents\\Projeto_Aero\\data\\processed\\imagens\\termicas\\turbina_normal_08d004f3f5\\turbina_normal_anotadas.png"
+      },
+      "temperature_measurement": null,
+      "interpretation": "Análise visual qualitativa; cores não representam temperatura calibrada em °C.",
+      "warnings": [],
+      "errors": []
+    }
+  ],
+  "dataset_diagnostic": {
+    "total_files": 4,
+    "supported_images": 4,
+    "modality_counts": {
+      "geometrica": 2,
+      "termica": 2,
+      "nao_classificada": 0
+    },
+    "class_counts": {
+      "geometrica": {
+        "defeituosa": 1,
+        "normal": 1
+      },
+      "termica": {
+        "superaquecimento": 1,
+        "normal": 1
+      }
+    },
+    "dimensions": {
+      "1408x768": 1,
+      "1407x768": 1,
+      "1024x1024": 2
+    },
+    "invalid_files": [],
+    "unsupported_files": [],
+    "exact_duplicates": [],
+    "near_duplicate_candidates": [],
+    "limitations": [
+      "Dataset pequeno; não há imagens suficientes por classe para validar ML."
+    ]
+  },
+  "training": {
+    "class_counts_by_modality": {
+      "geometrica": {
+        "defeituosa": 1,
+        "normal": 1
+      },
+      "termica": {
+        "superaquecimento": 1,
+        "normal": 1
+      }
+    },
+    "labeled_images": 4,
+    "ready_by_modality": {
+      "geometrica": false,
+      "termica": false
+    },
+    "ready_for_supervised_training": false,
+    "diagnostic": "Treinamento supervisionado não executado: são necessárias pelo menos duas classes com quatro imagens rotuladas por classe para uma divisão treino/teste mínima."
+  }
+}

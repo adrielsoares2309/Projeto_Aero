@@ -38,6 +38,7 @@ class RegimeSidebarTests(unittest.TestCase):
             patch.object(client, "get_regime_status", side_effect=getter),
             patch.object(client, "set_operating_regime", new=setter),
             patch.object(client, "get_health", return_value=(None, "offline")),
+            patch.object(client, "get_stats", return_value=(None, "offline")),
             patch.object(client, "is_api_online", return_value=False),
             patch.object(client, "get_predictions", return_value=({"items": []}, None)),
             patch.object(
@@ -109,6 +110,17 @@ class RegimeSidebarTests(unittest.TestCase):
         errors = " ".join(item.value for item in app.sidebar.error)
         self.assertIn("Falha ao comunicar", errors)
 
+    def test_vision_computer_page_opens_without_errors(self) -> None:
+        app = self._run_app(lambda regime: (regime_status(regime), None))
+        app.sidebar.radio[0].set_value("Visão Computacional").run()
+        self.assertEqual(list(app.exception), [])
+        self.assertTrue(any("Visão Computacional" in item.value for item in app.markdown))
+
+    def test_evaluation_page_renders_real_correlation_section(self) -> None:
+        app = self._run_app(lambda regime: (regime_status(regime), None))
+        app.sidebar.radio[0].set_value("Avaliação do Modelo").run()
+        self.assertEqual(list(app.exception), [])
+        self.assertTrue(any("Matriz de Correlação das Variáveis" in item.value for item in app.markdown))
 
 if __name__ == "__main__":
     unittest.main()

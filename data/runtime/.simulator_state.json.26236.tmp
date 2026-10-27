@@ -1,0 +1,16 @@
+{
+  "pid": 26236,
+  "status": "stopped",
+  "regime": "Cruzeiro",
+  "regime_anterior": "Carga_Alta",
+  "regime_changed_at": "2026-10-26T10:06:13",
+  "started_at": "2026-10-26T09:17:52.613",
+  "last_cycle_at": "2026-10-26T11:24:19.193",
+  "cycle": 1518,
+  "interval_seconds": 5.0,
+  "api_url": "http://127.0.0.1:8000",
+  "origem": "simulada",
+  "last_error": null,
+  "version": 2,
+  "stopped_at": "2026-10-26T11:24:19.195"
+}
