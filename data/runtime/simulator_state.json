@@ -1,15 +1,16 @@
 {
-  "pid": 21448,
-  "status": "running",
-  "regime": "Carga_Alta",
-  "regime_anterior": "Cruzeiro",
-  "regime_changed_at": "2026-10-27T12:32:30",
-  "started_at": "2026-10-27T10:28:29.542",
-  "last_cycle_at": "2026-10-27T12:33:40.949",
-  "cycle": 1503,
+  "pid": 28040,
+  "status": "stopped",
+  "regime": "Cruzeiro",
+  "regime_anterior": "Carga_Alta",
+  "regime_changed_at": "2026-10-27T13:06:32",
+  "started_at": "2026-10-27T13:04:02.213",
+  "last_cycle_at": "2026-10-27T13:08:57.841",
+  "cycle": 60,
   "interval_seconds": 5.0,
   "api_url": "http://127.0.0.1:8000",
   "origem": "simulada",
   "last_error": null,
-  "version": 2
+  "version": 2,
+  "stopped_at": "2026-10-27T13:08:57.843"
 }
